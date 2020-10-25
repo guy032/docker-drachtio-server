@@ -1,19 +1,22 @@
 <drachtio>
 
-    <!-- udp port to listen on for client connections (default 8022), and shared secret used to authenticate clients -->
     <admin port="9022" secret="cymru">0.0.0.0</admin>
-  
-    <!-- sip configuration -->
-    <sip>
-        <!-- local sip address to bind to.  Default: 'sip:*', which means listens on port 5060 on all interfaces and transports -->
-        <!--
-                Other examples:
-                    sip:192.168.1.100      
-                    sip:*;transport=tcp   
-                    sip:*:5061          
-        -->
-        <contacts></contacts>
 
+    <sip>
+
+        <udp-mtu>4096</udp-mtu>
+
+        <contacts>
+            <contact dns-names="sip.cophones.com" external-ip="3.125.84.99">sip:*</contact>
+            <contact>sip:*:80;transport=ws</contact>
+            <contact>sips:*:443;transport=wss</contact>
+        </contacts>
+
+        <tls>
+            <key-file>/etc/letsencrypt/live/sip.cophones.com/privkey.pem</key-file>
+            <cert-file>/etc/letsencrypt/live/sip.cophones.com/cert.pem</cert-file>
+            <chain-file>/etc/letsencrypt/live/sip.cophones.com/chain.pem</chain-file>
+        </tls>
 
         <spammers action="reject" tcp-action="discard">
             <header name="User-Agent">
@@ -30,14 +33,17 @@
 
     <cdrs>true</cdrs>
             
-    <!-- logging configuration -->
     <logging>
-
-        <console/>
-        
+        <file>
+            <name>/var/log/drachtio/drachtio.log</name>
+            <archive>/var/log/drachtio/archive</archive>
+            <size>50</size> 
+            <maxSize>100</maxSize>
+            <minSize>2000</minSize>
+            <auto-flush>false</auto-flush>
+        </file>
         <!-- sofia internal log level, from 0 (minimal) to 9 (verbose) -->
         <sofia-loglevel>3</sofia-loglevel>
-        
         <!-- notice, warning, error, info, debug.  Default: info -->
         <loglevel>info</loglevel>
     </logging>
